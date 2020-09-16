@@ -1,0 +1,432 @@
+-- MySQL Workbench Synchronization
+-- Generated: 2020-09-16 16:33
+-- Model: New Model
+-- Version: 1.0
+-- Project: Name of the project
+-- Author: Fran
+
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+
+CREATE SCHEMA IF NOT EXISTS `itacademy-practica-model-bd` DEFAULT CHARACTER SET utf8 ;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`AVIONS` (
+  `id_avio` INT(11) NOT NULL AUTO_INCREMENT,
+  `model_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id_avio`),
+  UNIQUE INDEX `id_avio_UNIQUE` (`id_avio` ASC) VISIBLE,
+  INDEX `fk_AVIONS_MODELS1_idx` (`model_id` ASC) VISIBLE,
+  CONSTRAINT `fk_AVIONS_MODELS1`
+    FOREIGN KEY (`model_id`)
+    REFERENCES `itacademy-practica-model-bd`.`MODELS` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`SEIENTS` (
+  `id_seient` INT(11) NOT NULL AUTO_INCREMENT,
+  `avio_id` INT(11) NOT NULL,
+  `tipus` VARCHAR(1) NOT NULL COMMENT 'P = Passadís\nF = Finestra\nC = Central',
+  PRIMARY KEY (`id_seient`),
+  UNIQUE INDEX `id_seient_UNIQUE` (`id_seient` ASC) VISIBLE,
+  INDEX `fk_SEIENTS_AVIONS1_idx` (`avio_id` ASC) VISIBLE,
+  CONSTRAINT `fk_SEIENTS_AVIONS1`
+    FOREIGN KEY (`avio_id`)
+    REFERENCES `itacademy-practica-model-bd`.`AVIONS` (`id_avio`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`QUADRES` (
+  `id_quadre` INT(11) NOT NULL AUTO_INCREMENT,
+  `titol` VARCHAR(45) NOT NULL,
+  `preu` FLOAT(11) NOT NULL,
+  `pintor_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id_quadre`),
+  UNIQUE INDEX `id_quadre_UNIQUE` (`id_quadre` ASC) VISIBLE,
+  INDEX `fk_QUADRES_PINTORS1_idx` (`pintor_id` ASC) VISIBLE,
+  CONSTRAINT `fk_QUADRES_PINTORS1`
+    FOREIGN KEY (`pintor_id`)
+    REFERENCES `itacademy-practica-model-bd`.`PINTORS` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`COMPRADORS` (
+  `id_comprador` INT(11) NOT NULL AUTO_INCREMENT,
+  `dni` VARCHAR(12) NOT NULL,
+  `nom` VARCHAR(45) NOT NULL,
+  `cognoms` VARCHAR(75) NOT NULL,
+  PRIMARY KEY (`id_comprador`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`VENTES` (
+  `id_venta` INT(11) NOT NULL AUTO_INCREMENT,
+  `data` DATETIME NOT NULL,
+  `quadre_id` INT(11) NOT NULL,
+  `comprador_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id_venta`),
+  INDEX `fk_VENTES_QUADRES1_idx` (`quadre_id` ASC) VISIBLE,
+  INDEX `fk_VENTES_COMPRADORS1_idx` (`comprador_id` ASC) VISIBLE,
+  CONSTRAINT `fk_VENTES_QUADRES1`
+    FOREIGN KEY (`quadre_id`)
+    REFERENCES `itacademy-practica-model-bd`.`QUADRES` (`id_quadre`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_VENTES_COMPRADORS1`
+    FOREIGN KEY (`comprador_id`)
+    REFERENCES `itacademy-practica-model-bd`.`COMPRADORS` (`id_comprador`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`USUARIS` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(45) NOT NULL,
+  `contrasenya` VARCHAR(15) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`VIDEOS` (
+  `id` VARCHAR(15) NOT NULL,
+  `titol` VARCHAR(15) NOT NULL,
+  `descripcio` VARCHAR(90) NULL DEFAULT NULL,
+  `url` VARCHAR(100) NOT NULL,
+  `data` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `usuari_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_VIDEOS_USUARIS1_idx` (`usuari_id` ASC) VISIBLE,
+  CONSTRAINT `fk_VIDEOS_USUARIS1`
+    FOREIGN KEY (`usuari_id`)
+    REFERENCES `itacademy-practica-model-bd`.`USUARIS` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`USUARIS_AMAZON` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `email` VARCHAR(45) NOT NULL,
+  `contrasenya` VARCHAR(15) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`LLIBRES` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `titol` VARCHAR(45) NOT NULL,
+  `isbn` VARCHAR(15) NOT NULL,
+  `preu` FLOAT(11) NOT NULL,
+  `unitats_disponibles` INT(11) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`AUTORS` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `nom` VARCHAR(45) NOT NULL,
+  `cognoms` VARCHAR(100) NULL DEFAULT NULL,
+  `direccio_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_AUTORS_DIRECCIO1_idx` (`direccio_id` ASC) VISIBLE,
+  CONSTRAINT `fk_AUTORS_DIRECCIO1`
+    FOREIGN KEY (`direccio_id`)
+    REFERENCES `itacademy-practica-model-bd`.`DIRECCIO` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`PINTORS` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `nom` VARCHAR(45) NOT NULL,
+  `cognoms` VARCHAR(75) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`DIRECCIO` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `direccio` VARCHAR(150) NOT NULL,
+  `cp` VARCHAR(5) NOT NULL,
+  `poblacio` VARCHAR(45) NOT NULL,
+  `provincia` VARCHAR(45) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`FACTURA_LLIBRES` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `data` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `usuari_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  INDEX `fk_FACTURA_USUARIS_AMAZON1_idx` (`usuari_id` ASC) VISIBLE,
+  CONSTRAINT `fk_FACTURA_USUARIS_AMAZON1`
+    FOREIGN KEY (`usuari_id`)
+    REFERENCES `itacademy-practica-model-bd`.`USUARIS_AMAZON` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`LLIBRES_has_FACTURA` (
+  `llibre_id` INT(11) NOT NULL,
+  `factura_id` INT(11) NOT NULL,
+  `unitats` INT(11) NOT NULL,
+  `preu` FLOAT(11) NOT NULL,
+  PRIMARY KEY (`llibre_id`, `factura_id`),
+  INDEX `fk_LLIBRES_has_FACTURA_FACTURA1_idx` (`factura_id` ASC) VISIBLE,
+  INDEX `fk_LLIBRES_has_FACTURA_LLIBRES1_idx` (`llibre_id` ASC) VISIBLE,
+  CONSTRAINT `fk_LLIBRES_has_FACTURA_LLIBRES1`
+    FOREIGN KEY (`llibre_id`)
+    REFERENCES `itacademy-practica-model-bd`.`LLIBRES` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_LLIBRES_has_FACTURA_FACTURA1`
+    FOREIGN KEY (`factura_id`)
+    REFERENCES `itacademy-practica-model-bd`.`FACTURA_LLIBRES` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`USUARIS_XARXES` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `nom` VARCHAR(45) NOT NULL,
+  `email` VARCHAR(45) NOT NULL,
+  `contrasenya` VARCHAR(15) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `email_UNIQUE` (`email` ASC) VISIBLE,
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`AUTORS_has_LLIBRES` (
+  `autor_id` INT(11) NOT NULL,
+  `llibre_id` INT(11) NOT NULL,
+  PRIMARY KEY (`autor_id`, `llibre_id`),
+  INDEX `fk_AUTORS_has_LLIBRES_LLIBRES1_idx` (`llibre_id` ASC) VISIBLE,
+  INDEX `fk_AUTORS_has_LLIBRES_AUTORS1_idx` (`autor_id` ASC) VISIBLE,
+  CONSTRAINT `fk_AUTORS_has_LLIBRES_AUTORS1`
+    FOREIGN KEY (`autor_id`)
+    REFERENCES `itacademy-practica-model-bd`.`AUTORS` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_AUTORS_has_LLIBRES_LLIBRES1`
+    FOREIGN KEY (`llibre_id`)
+    REFERENCES `itacademy-practica-model-bd`.`LLIBRES` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`PROVEIDORS` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `nom` VARCHAR(45) NOT NULL,
+  `carrer` VARCHAR(150) NULL DEFAULT NULL,
+  `num` VARCHAR(10) NULL DEFAULT NULL,
+  `pis` VARCHAR(5) NULL DEFAULT NULL,
+  `porta` VARCHAR(5) NULL DEFAULT NULL,
+  `cp` VARCHAR(5) NULL DEFAULT NULL,
+  `ciutat` VARCHAR(45) NULL DEFAULT NULL,
+  `pais` VARCHAR(25) NULL DEFAULT NULL,
+  `telef` VARCHAR(15) NULL DEFAULT NULL,
+  `fax` VARCHAR(15) NULL DEFAULT NULL,
+  `nif` VARCHAR(15) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`CLIENTS` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `nom` VARCHAR(45) NOT NULL,
+  `cognoms` VARCHAR(75) NOT NULL,
+  `carrer` VARCHAR(150) NULL DEFAULT NULL,
+  `num` VARCHAR(10) NULL DEFAULT NULL,
+  `pis` VARCHAR(5) NULL DEFAULT NULL,
+  `porta` VARCHAR(5) NULL DEFAULT NULL,
+  `cp` VARCHAR(5) NULL DEFAULT NULL,
+  `ciutat` VARCHAR(45) NULL DEFAULT NULL,
+  `pais` VARCHAR(25) NULL DEFAULT NULL,
+  `telef` VARCHAR(15) NULL DEFAULT NULL,
+  `email` VARCHAR(45) NULL DEFAULT NULL,
+  `data_registre` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `referenciat_per_client_id` INT(11) NULL DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_CLIENTS_CLIENTS1_idx` (`referenciat_per_client_id` ASC) VISIBLE,
+  CONSTRAINT `fk_CLIENTS_CLIENTS1`
+    FOREIGN KEY (`referenciat_per_client_id`)
+    REFERENCES `itacademy-practica-model-bd`.`CLIENTS` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`EMPLEAT` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `nom` VARCHAR(45) NOT NULL,
+  `cognoms` VARCHAR(75) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`MARQUES_ULLERES` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `nom` VARCHAR(75) NOT NULL,
+  `proveidor_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_MARQUES_ULLERES_PROVEIDORS1_idx` (`proveidor_id` ASC) VISIBLE,
+  CONSTRAINT `fk_MARQUES_ULLERES_PROVEIDORS1`
+    FOREIGN KEY (`proveidor_id`)
+    REFERENCES `itacademy-practica-model-bd`.`PROVEIDORS` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`TIPUS_MUNTURA` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `nom` VARCHAR(75) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`ULLERES` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `graduacio_left` VARCHAR(15) NOT NULL,
+  `graduacio_right` VARCHAR(15) NOT NULL,
+  `color_vidre_left` VARCHAR(15) NOT NULL,
+  `color_vidre_right` VARCHAR(15) NOT NULL,
+  `color_muntura` VARCHAR(15) NOT NULL,
+  `preu` FLOAT(11) NOT NULL,
+  `tipus_muntura_id` INT(11) NOT NULL,
+  `marca_ulleres_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_ULLERES_TIPUS_MUNTURA1_idx` (`tipus_muntura_id` ASC) VISIBLE,
+  INDEX `fk_ULLERES_MARQUES_ULLERES1_idx` (`marca_ulleres_id` ASC) VISIBLE,
+  CONSTRAINT `fk_ULLERES_TIPUS_MUNTURA1`
+    FOREIGN KEY (`tipus_muntura_id`)
+    REFERENCES `itacademy-practica-model-bd`.`TIPUS_MUNTURA` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_ULLERES_MARQUES_ULLERES1`
+    FOREIGN KEY (`marca_ulleres_id`)
+    REFERENCES `itacademy-practica-model-bd`.`MARQUES_ULLERES` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`FACTURA_ULLERES` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `data` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `import` FLOAT(11) NULL DEFAULT NULL,
+  `empleat_id` INT(11) NOT NULL,
+  `client_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_FACTURA_EMPLEAT1_idx` (`empleat_id` ASC) VISIBLE,
+  INDEX `fk_FACTURA_CLIENTS1_idx` (`client_id` ASC) VISIBLE,
+  CONSTRAINT `fk_FACTURA_EMPLEAT1`
+    FOREIGN KEY (`empleat_id`)
+    REFERENCES `itacademy-practica-model-bd`.`EMPLEAT` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_FACTURA_CLIENTS1`
+    FOREIGN KEY (`client_id`)
+    REFERENCES `itacademy-practica-model-bd`.`CLIENTS` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`LINIES_FACTURA` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `factura_id` INT(11) NOT NULL,
+  `ullera_id` INT(11) NOT NULL,
+  `quantitat` INT(11) NOT NULL,
+  `preu` FLOAT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_LINIES_FACTURA_FACTURA1_idx` (`factura_id` ASC) VISIBLE,
+  INDEX `fk_LINIES_FACTURA_ULLERES1_idx` (`ullera_id` ASC) VISIBLE,
+  CONSTRAINT `fk_LINIES_FACTURA_FACTURA1`
+    FOREIGN KEY (`factura_id`)
+    REFERENCES `itacademy-practica-model-bd`.`FACTURA_ULLERES` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_LINIES_FACTURA_ULLERES1`
+    FOREIGN KEY (`ullera_id`)
+    REFERENCES `itacademy-practica-model-bd`.`ULLERES` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`MODELS` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `nom` VARCHAR(45) NOT NULL,
+  `capacitat` INT(11) NOT NULL,
+  PRIMARY KEY (`id`))
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`FOTOS` (
+  `id` INT(11) NOT NULL AUTO_INCREMENT,
+  `lloc` VARCHAR(75) NULL DEFAULT NULL,
+  `url` VARCHAR(150) NULL DEFAULT NULL,
+  `usuari_id` INT(11) NOT NULL,
+  PRIMARY KEY (`id`),
+  UNIQUE INDEX `id_UNIQUE` (`id` ASC) VISIBLE,
+  INDEX `fk_FOTOS_USUARIS_XARXES1_idx` (`usuari_id` ASC) VISIBLE,
+  CONSTRAINT `fk_FOTOS_USUARIS_XARXES1`
+    FOREIGN KEY (`usuari_id`)
+    REFERENCES `itacademy-practica-model-bd`.`USUARIS_XARXES` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+CREATE TABLE IF NOT EXISTS `itacademy-practica-model-bd`.`USUARIS_XARXES_has_USUARIS_XARXES` (
+  `usuari_1_id` INT(11) NOT NULL,
+  `usuari_2_id` INT(11) NOT NULL,
+  `amistat` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`usuari_1_id`, `usuari_2_id`),
+  INDEX `fk_USUARIS_XARXES_has_USUARIS_XARXES_USUARIS_XARXES2_idx` (`usuari_2_id` ASC) VISIBLE,
+  INDEX `fk_USUARIS_XARXES_has_USUARIS_XARXES_USUARIS_XARXES1_idx` (`usuari_1_id` ASC) VISIBLE,
+  CONSTRAINT `fk_USUARIS_XARXES_has_USUARIS_XARXES_USUARIS_XARXES1`
+    FOREIGN KEY (`usuari_1_id`)
+    REFERENCES `itacademy-practica-model-bd`.`USUARIS_XARXES` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_USUARIS_XARXES_has_USUARIS_XARXES_USUARIS_XARXES2`
+    FOREIGN KEY (`usuari_2_id`)
+    REFERENCES `itacademy-practica-model-bd`.`USUARIS_XARXES` (`id`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = utf8;
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
